@@ -3,6 +3,7 @@ package sustain
 import (
 	"embed"
 	"github.com/rs/zerolog"
+	"os"
 	"sync"
 )
 
@@ -50,24 +51,29 @@ func (c *DefaultConfig) GetAddr() string {
 func (c *DefaultConfig) GetSSLAddr() string {
 	return c.SSLAddr
 }
+func NewSQLFS(fs embed.FS) *SQLFS {
+	return &SQLFS{
+		FS: fs,
+	}
+}
 
 type PeroModuleContext struct {
 	httpRouter *PeroHttp
-	cfg        *PeroConfig
-	log        *zerolog.Logger
+	cfg        PeroConfig
+	log        zerolog.Logger
 	valueMap   sync.Map
 	SetupTask  bool
 }
 
-func NewPeroModuleContext(cfg *PeroConfig, setupTask bool) *PeroModuleContext {
+func NewPeroModuleContext(cfg PeroConfig, setupTask bool) *PeroModuleContext {
 	return &PeroModuleContext{
 		cfg:       cfg,
-		log:       zerolog.DefaultContextLogger,
+		log:       zerolog.New(os.Stderr).With().Timestamp().Logger(),
 		valueMap:  sync.Map{},
 		SetupTask: setupTask,
 	}
 }
-func (p *PeroModuleContext) getConfig() *PeroConfig {
+func (p *PeroModuleContext) getConfig() PeroConfig {
 	return p.cfg
 }
 func (c *PeroModuleContext) GetHttpRoute() *PeroHttp {
@@ -99,7 +105,6 @@ func GetModules(ctx any) []Module {
 	return moduleList
 }
 func StartAllModule(ctx *PeroModuleContext) error {
-	// 获取所有模块
 	ms := GetModules(ctx)
 	for _, m := range ms {
 		if m.Start != nil {

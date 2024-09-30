@@ -46,11 +46,11 @@ func newPeroRouterGroup(router *gin.RouterGroup, p *PeroHttp) *PeroRouterGroup {
 func (p *PeroHttp) Group(path string, handlers ...PeroHandlerFunc) *PeroRouterGroup {
 	return newPeroRouterGroup(p.r.Group(path, p.adaptor(handlers)...), p)
 }
-func (r *PeroRouterGroup) Post(path string, handlers ...PeroHandlerFunc) {
-	r.routers.POST(path, r.P.adaptor(handlers)...)
+func (r *PeroRouterGroup) Post(path string, handlers PeroHandlerFunc) {
+	r.routers.POST(path, r.P.convert(handlers))
 }
-func (r *PeroRouterGroup) Get(path string, handlers ...PeroHandlerFunc) {
-	r.routers.GET(path, r.P.adaptor(handlers)...)
+func (r *PeroRouterGroup) Get(path string, handlers PeroHandlerFunc) {
+	r.routers.GET(path, r.P.convert(handlers))
 }
 func (p *PeroHttp) Use(handlers ...PeroHandlerFunc) {
 	p.r.Use(p.adaptor(handlers)...)
@@ -74,7 +74,7 @@ func GetLoginUID(token string, tokenPrefix string, cache cache.Cache) string {
 
 // adaptor transmit PeroHandlerFunc -> gin.HandlerFunc
 func (p *PeroHttp) adaptor(handlers []PeroHandlerFunc) []gin.HandlerFunc {
-	ginHandlers := make([]gin.HandlerFunc, len(handlers))
+	ginHandlers := make([]gin.HandlerFunc, 0, len(handlers))
 	if handlers != nil {
 		for _, v := range handlers {
 			ginHandlers = append(ginHandlers, p.convert(v))

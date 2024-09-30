@@ -3,6 +3,7 @@ package sustain
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/judwhite/go-svc"
+	"github.com/rs/zerolog"
 )
 
 type PeroFlow interface {
@@ -16,6 +17,7 @@ func setup(ctx *PeroModuleContext) error {
 		if m.SetupAPI != nil {
 			a := m.SetupAPI()
 			if a != nil {
+				ctx.log.Debug().Msg("sustain:" + m.Name + "register http route")
 				a.Route(ctx.GetHttpRoute())
 			}
 		}
@@ -43,11 +45,13 @@ func Run(ctx *PeroModuleContext) {
 	}
 }
 func Prepare() *PeroModuleContext {
+
 	gin.SetMode(gin.DebugMode)
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	var config PeroConfig
 	config = &DefaultConfig{
-		Addr:    "127.0.0.1:80",
-		SSLAddr: "127.0.0.1:443",
+		Addr:    ":9001",
+		SSLAddr: "",
 	}
-	return NewPeroModuleContext(&config, true)
+	return NewPeroModuleContext(config, true)
 }

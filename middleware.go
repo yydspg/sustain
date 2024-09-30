@@ -1,8 +1,8 @@
 package sustain
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 	secure2 "github.com/unrolled/secure"
 	"github.com/yydspg/sustain/cache"
 	"net/http"
@@ -11,7 +11,6 @@ import (
 
 func CORSMiddleware() PeroHandlerFunc {
 	return func(c *PeroContext) {
-
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, token, accept, origin, Cache-Control, X-Requested-With, appid, noncestr, sign, timestamp")
@@ -62,7 +61,6 @@ func TLSMiddleware(sslAddr string) PeroHandlerFunc {
 		})
 		err := secureMiddleware.Process(c.Writer, c.Request)
 
-		// If there was an error, do not continue.
 		if err != nil {
 			return
 		}
@@ -72,7 +70,7 @@ func TLSMiddleware(sslAddr string) PeroHandlerFunc {
 }
 func TestMiddleware() PeroHandlerFunc {
 	return func(c *PeroContext) {
-		fmt.Println("test middleware")
+		log.Logger.Log().Msg("sustain : test middleware")
 		c.Next()
 	}
 }

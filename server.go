@@ -3,6 +3,7 @@ package sustain
 import (
 	"github.com/judwhite/go-svc"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -19,10 +20,12 @@ type PeroServer struct {
 
 func NewPeroServer(ctx *PeroModuleContext) *PeroServer {
 	r := NewPeroHttp()
-	r.Use(CORSMiddleware())
+	//r.Use(CORSMiddleware())
 	return &PeroServer{
-		p:   r,
-		ctx: ctx,
+		p:       r,
+		ctx:     ctx,
+		addr:    ctx.cfg.GetAddr(),
+		sslAddr: ctx.cfg.GetSSLAddr(),
 	}
 }
 func (s *PeroServer) Init(env svc.Environment) error {
@@ -54,6 +57,7 @@ func (s *PeroServer) run(sslAddr string, addr string) error {
 				}
 			}()
 		} else {
+			log.Logger.Log().Msg("sustain server run")
 			err := s.p.Run(addr)
 			if err != nil {
 				return err
@@ -75,6 +79,7 @@ func (s *PeroServer) Start() error {
 			panic(err)
 		}
 	}()
+
 	err := StartAllModule(s.ctx)
 	if err != nil {
 		return err
