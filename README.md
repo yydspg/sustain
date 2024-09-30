@@ -37,20 +37,20 @@ func init() {
 }
 ```
 ## recommend
-- project structure
-> example
-├── 1module.go
-├── api.go
-├── assets
-│   └── ssl
-│       ├── ssl.key
-│       └── ssl.pem
-├── docs
-├── service.go
-├── sql
-│   └── test.sql
-├── swagger
-│   └── api.yaml
-└── task.go
+- project structure <br>
+  example <br>
+  ├── 1module.go  <br>
+  ├── api.go  <br>
+  ├── assets <br>
+  │   └── ssl <br>
+  │       ├── ssl.key <br>
+  │       └── ssl.pem <br>
+  ├── docs  <br>
+  ├── service.go  <br>
+  ├── sql  <br>
+  │   └── test.sql  <br>
+  ├── swagger  <br>
+  │   └── api.yaml <br>
+  └── task.go
 ## version
 - 1.0 /24/09/30
